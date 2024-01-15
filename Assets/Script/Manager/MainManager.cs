@@ -32,6 +32,7 @@ public class MainManager : MonoBehaviour
     private Vector3 initialMousePos;
     private Vector3 mousePosition;
     private static int mergeCount = 0;
+    [HideInInspector] public bool GameOver = false;
 
     private void Awake()
     {
@@ -55,11 +56,13 @@ public class MainManager : MonoBehaviour
     {
         InitPooling();
         PickFruitRandom();
-        SetupFruit();
+        StartCoroutine(SetupFruit());
     }
 
     private void Update()
     {
+        if (GameOver)
+            return;
         Controller();
     }
     private void InitPooling()
@@ -86,12 +89,14 @@ public class MainManager : MonoBehaviour
     {
         currentFruit = nextFruit;
         nextFruit = GetFruitRandom();
-        SetupFruit();
+        StartCoroutine(SetupFruit());
     }
 
-    private void SetupFruit()
+    private IEnumerator SetupFruit()
     {
+        yield return new WaitForSeconds(1f);
         currentFruit.transform.position = startPoint.transform.position;
+        ResetHasMerged();
         TurnOffCurrentFruitGravity();
         currentFruit.SetActive(true);
     }
@@ -112,12 +117,9 @@ public class MainManager : MonoBehaviour
 
     private void Controller()
     {
+        if (!currentFruit.activeSelf)
+            return;
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            initialMousePos = Input.mousePosition;
-        }
 
         if (Input.GetMouseButton(0))
         {
@@ -135,16 +137,19 @@ public class MainManager : MonoBehaviour
             PickNextFruitRandom();
         }
     }
+
     private void TurnOffCurrentFruitGravity()
     {
         rb = currentFruit.GetComponent<Rigidbody2D>();
         rb.gravityScale = 0;
     }
+
     private void TurnOnCurrentFruitGravity()
     {
         rb = currentFruit.GetComponent<Rigidbody2D>();
         rb.gravityScale = 1;
     }
+
     public void UpgradeObject(GameObject fruitMerged1, GameObject fruitMerged2, GameObject upgradeObject)
     {
         mergeCount++;
@@ -154,20 +159,42 @@ public class MainManager : MonoBehaviour
 
 
             GameObject newLevelObject = Instantiate(upgradeObject, middlePosition, Quaternion.identity, upgradeContainer).gameObject;
-
+            newLevelObject.name = RemoveCloneSuffix(newLevelObject.name) + " (UpgradeObject)";
             // Check if the cast is successful
             if (newLevelObject != null)
             {
-                poolingObjects.Add(fruitMerged1);
-                poolingObjects.Add(fruitMerged2);
                 mergeCount = 0;
+                Fruit scoreFruit = fruitMerged1.GetComponent<Fruit>();
+                ScoreManager.Instance.PlusScore(scoreFruit.score);
             }
             else
             {
-                // Handle the case where the cast is not successful
                 Debug.LogError("Failed to cast instantiated object to GameObject.");
             }
         }
         Debug.Log("Upgrade Object Type: " + upgradeObject.GetType());
+    }
+
+    string RemoveCloneSuffix(string originalName)
+    {
+        int cloneIndex = originalName.IndexOf("(Clone)");
+
+        if (cloneIndex != -1)
+        {
+            return originalName.Substring(0, cloneIndex).Trim();
+        }
+
+        return originalName;
+    }
+
+    private IEnumerator resetMergeCount()
+    {
+        yield return new WaitForSeconds(0.01f);
+        mergeCount = 0;
+    }
+
+    public void AddToPoolingObjects(GameObject fruit)
+    {
+        poolingObjects.Add(fruit);
     }
 }

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: MergeableConfig
   m_EditorClassIdentifier: 
   objectMerges:
-  - {fileID: 6280984710675573198, guid: 79e0c022776ccf847abe886167e34ca9, type: 3}
-  - {fileID: 7904302933880313311, guid: 4dd2b2401950dcf4598e8b367edd0201, type: 3}
-  - {fileID: 3608265787271728996, guid: 9c7d70b4a13936e42bb73f70e0d3178e, type: 3}
-  - {fileID: 7658311717442012167, guid: 2b6b0755882d91b44b126b2dd65ad246, type: 3}
-  - {fileID: 7086751889119644691, guid: c7658a4f02aa1a6459aa13459ed6e90f, type: 3}
+  - {fileID: 5536533491147205347, guid: 79e0c022776ccf847abe886167e34ca9, type: 3}
+  - {fileID: 2220871067952395909, guid: 4dd2b2401950dcf4598e8b367edd0201, type: 3}
+  - {fileID: 7936151816763485990, guid: 9c7d70b4a13936e42bb73f70e0d3178e, type: 3}
+  - {fileID: 8610592968833110473, guid: 2b6b0755882d91b44b126b2dd65ad246, type: 3}
+  - {fileID: 1389102701034495418, guid: c7658a4f02aa1a6459aa13459ed6e90f, type: 3}
   fruitObjects:
   - code: 0
     skinFruits:
